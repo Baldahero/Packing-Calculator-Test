@@ -661,7 +661,7 @@ with header_left:
         st.markdown("**NorDan**")
 
 with header_right:
-    st.title("Packing Calculator Pre-Alfa Version")
+    st.title("TEST")
     st.caption("Manual packing calculation for constructions")
 
 # with st.expander("Rules used", expanded=False):
