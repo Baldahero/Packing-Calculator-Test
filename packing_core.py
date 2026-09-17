@@ -241,7 +241,7 @@ def calculate_construction(c: Construction) -> Dict[str, object]:
             )
         if facade_weight_parts > 1:
             notes.append(
-                f"Facade frame divided across {facade_weight_parts} pallets to keep each at or below 1000 kg"
+                f"Facade profiles require {facade_weight_parts} pallets to keep each at or below 1000 kg"
             )
         notes.append(
             f"Facade requires at least {facade_pallet_parts} product pallet(s); no unit-count limit"
@@ -304,7 +304,22 @@ def expand_by_qty(df: pd.DataFrame) -> pd.DataFrame:
                     f"{unit_idx}.{split_idx}" if split_count > 1 else unit_idx
                 )
                 if split_count > 1:
-                    unit["Unit weight (kg)"] = float(row["Unit weight (kg)"]) / split_count
+                    total_weight = float(row["Unit weight (kg)"])
+                    if weight_parts >= length_parts:
+                        # Facades are loose profiles, not one indivisible product.
+                        # Fill each pallet up to 1000 kg and put the remainder
+                        # on the last pallet instead of splitting weight equally.
+                        remaining_weight = max(
+                            0.0,
+                            total_weight - MAX_PALLET_WEIGHT_KG * (split_idx - 1),
+                        )
+                        unit["Unit weight (kg)"] = min(
+                            MAX_PALLET_WEIGHT_KG, remaining_weight
+                        )
+                    else:
+                        # A length-based two-part facade needs one pallet for
+                        # each half even when its total weight is below 1000 kg.
+                        unit["Unit weight (kg)"] = total_weight / split_count
                     unit["Max per pallet"] = 1
                 rows.append(unit)
     return pd.DataFrame(rows)
