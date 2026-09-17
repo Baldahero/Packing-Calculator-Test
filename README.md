@@ -30,6 +30,20 @@ pip install -r requirements.txt
 streamlit run PK.py
 ```
 
+Streamlit also exposes an **Experimental ML Demo** page. It is deliberately
+limited to system-neutral `Window` and `Door` inputs. The page supports:
+
+- manual input in an editable table;
+- the new `ML Input` Excel template;
+- the existing `Constructions` import template for supported window/door rows;
+- deterministic rule results beside experimental ML predictions;
+- a 1200 mm pallet visualisation with sides A/B and a 100 mm centre rack;
+- downloadable Excel results.
+
+The ML models are trained at startup on 400 deterministic synthetic examples
+(320 train / 80 test). They are demonstration models only. Hard limits and the
+final packing result always come from the rule engine.
+
 ## Test
 
 ```bash
