@@ -602,7 +602,7 @@ def make_import_template() -> bytes:
         cell.alignment = Alignment(horizontal="center")
 
     dv_type = DataValidation(type="list",
-        formula1='"Door,Window,Fixed Window,Sliding Door,Double Sliding Door,Triple Sliding Door,Quad Sliding Door,Folding Door,Double Folding Door,Triple Folding Door,Quad Folding Door,5-leaf Folding Door,2160S XS,Door + Sidelight,Window + Sidelight"',
+        formula1='"Door,Window,Fixed Window,Sliding Door,Double Sliding Door,Triple Sliding Door,Quad Sliding Door,Folding Door,Double Folding Door,Triple Folding Door,Quad Folding Door,5-leaf Folding Door,Door + Sidelight,Window + Sidelight"',
         showDropDown=False)
     ws.add_data_validation(dv_type)
     dv_type.sqref = "B2:B1000"
@@ -688,7 +688,6 @@ TYPES = [
     "Triple Folding Door",
     "Quad Folding Door",
     "5-leaf Folding Door",
-    "2160S XS",
     "Door + Sidelight",
     "Window + Sidelight",
     "Facade",
