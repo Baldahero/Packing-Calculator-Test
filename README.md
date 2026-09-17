@@ -10,8 +10,9 @@ Safe test copy of the NorDan packing calculator. The original repository is not 
 - Facades are packed by weight only, without a unit-count limit.
 - A facade over 6000 mm is divided into two equal-length parts. If either part
   still exceeds 6000 mm, the result requires manual review.
-- A facade frame over 1000 kg is distributed across enough product pallets to
-  keep every pallet at or below 1000 kg; it is never dropped from the estimate.
+- Facade profiles over 1000 kg use additional product pallets. Pallets are
+  filled up to 1000 kg and the remaining profile weight uses the last pallet;
+  the facade is never dropped from the estimate.
 - Facade glass boxes use a fixed calculation length of 3000 mm.
 - LDM for a 1200 mm pallet is `actual pallet length / 2000`.
 - Constructions higher than 2700 mm are packed sideways and use height + 200 mm
