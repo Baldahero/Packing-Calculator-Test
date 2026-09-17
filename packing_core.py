@@ -4,7 +4,9 @@ Confirmed scope for this test version:
 - only 1200 mm deep product pallets and glass boxes;
 - Ireland pallet/box weight limit: 1000 kg;
 - no uPVC rules;
-- facades are limited by weight only, not by item count.
+- facades are limited by weight, not by item count;
+- facade lengths over 6000 mm are divided into two equal parts;
+- facade glass boxes are calculated at 3000 mm length.
 """
 
 import math
@@ -23,6 +25,8 @@ MAX_VERTICAL_PRODUCT_HEIGHT_MM = MAX_PACKED_HEIGHT_MM - PACKING_ALLOWANCE_HEIGHT
 MAX_PALLET_WEIGHT_KG = 1000.0
 MAX_GLASS_BOX_WEIGHT_KG = 1000.0
 GLASS_BOX_PRICE_EUR = 180.0
+MAX_FACADE_LENGTH_MM = 6000.0
+FACADE_GLASS_BOX_LENGTH_MM = 3000.0
 
 # Conservative capacities for a 1200 mm pallet when the detailed pictured
 # configuration is not available in the input data.
@@ -143,13 +147,17 @@ def calculate_construction(c: Construction) -> Dict[str, object]:
     frame_weight = float(c.weight_kg)
     glass_weight = 0.0 if c.glass_mode == "Without glass" else float(c.glass_weight_kg)
 
-    if frame_weight > MAX_PALLET_WEIGHT_KG:
+    is_facade = item_type in FACADE_TYPES
+
+    if frame_weight > MAX_PALLET_WEIGHT_KG and not is_facade:
         return _not_possible(c, "Frame weight exceeds the 1000 kg pallet limit")
 
     if c.rotated:
         packed_length_base = height
         vertical_product_height = width
-        packed_sideways = height > MAX_VERTICAL_PRODUCT_HEIGHT_MM
+        # Rotation is explicitly selected by the user. After the dimensions are
+        # swapped, the original width is the vertical packed height.
+        packed_sideways = False
     elif height > MAX_VERTICAL_PRODUCT_HEIGHT_MM:
         # Automatic sideways packing: the original height becomes pallet length.
         packed_length_base = height
@@ -166,6 +174,16 @@ def calculate_construction(c: Construction) -> Dict[str, object]:
             "Construction cannot fit vertically or sideways within the 2900 mm packed-height limit",
         )
 
+    facade_length_parts = 1
+    if is_facade and packed_length_base > MAX_FACADE_LENGTH_MM:
+        facade_length_parts = 2
+        packed_length_base /= 2.0
+        if packed_length_base > MAX_FACADE_LENGTH_MM:
+            return _not_possible(
+                c,
+                "Facade remains longer than 6000 mm after division into two parts; manual review required",
+            )
+
     allowance = 200 if packed_sideways or packed_length_base >= 3000 else 100
     pallet_length = packed_length_base + allowance
     if pallet_length > MAX_PACKED_LENGTH_MM:
@@ -174,7 +192,6 @@ def calculate_construction(c: Construction) -> Dict[str, object]:
             f"Required pallet length {pallet_length:.0f} mm exceeds the 6800 mm limit",
         )
 
-    is_facade = item_type in FACADE_TYPES
     parts = SLIDING_PARTS.get(item_type, 1)
     packed_as = "UNGLAZED"
     glass_separate = "NO"
@@ -216,7 +233,19 @@ def calculate_construction(c: Construction) -> Dict[str, object]:
 
     if is_facade:
         max_per_pallet = 999999  # weight-only packing rule
-        notes.append("No unit-count limit; 1000 kg maximum")
+        facade_weight_parts = max(1, int(math.ceil(frame_weight / MAX_PALLET_WEIGHT_KG)))
+        facade_pallet_parts = max(facade_length_parts, facade_weight_parts)
+        if facade_length_parts == 2:
+            notes.append(
+                f"Facade length divided into 2 equal parts of {width / 2:.0f} mm"
+            )
+        if facade_weight_parts > 1:
+            notes.append(
+                f"Facade frame divided across {facade_weight_parts} pallets to keep each at or below 1000 kg"
+            )
+        notes.append(
+            f"Facade requires at least {facade_pallet_parts} product pallet(s); no unit-count limit"
+        )
     else:
         max_per_pallet = CAPACITY_1200.get(item_type, 6)
         if item_type in {"window", "fixed window"}:
@@ -224,8 +253,11 @@ def calculate_construction(c: Construction) -> Dict[str, object]:
 
     # The entered glass weight is the total per construction. Parts describe
     # geometry only and must not multiply that weight.
-    glass_part_length = packed_length_base / parts if parts > 1 else packed_length_base
-    glass_pallet_length = glass_part_length + (200 if glass_part_length >= 3000 else 100)
+    if is_facade:
+        glass_pallet_length = FACADE_GLASS_BOX_LENGTH_MM
+    else:
+        glass_part_length = packed_length_base / parts if parts > 1 else packed_length_base
+        glass_pallet_length = glass_part_length + (200 if glass_part_length >= 3000 else 100)
 
     if c.rotated:
         notes.append("Packed with width/height orientation swapped")
@@ -255,10 +287,26 @@ def expand_by_qty(df: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for _, row in df.iterrows():
         for unit_idx in range(1, int(row["Qty"]) + 1):
-            unit = row.copy()
-            unit["Qty"] = 1
-            unit["Unit idx"] = unit_idx
-            rows.append(unit)
+            item_type = str(row.get("Type", "")).strip().lower()
+            if item_type in FACADE_TYPES:
+                width = float(row.get("Width (mm)", 0) or 0)
+                weight = float(row.get("Unit weight (kg)", 0) or 0)
+                length_parts = 2 if width > MAX_FACADE_LENGTH_MM else 1
+                weight_parts = max(1, int(math.ceil(weight / MAX_PALLET_WEIGHT_KG)))
+                split_count = max(length_parts, weight_parts)
+            else:
+                split_count = 1
+
+            for split_idx in range(1, split_count + 1):
+                unit = row.copy()
+                unit["Qty"] = 1
+                unit["Unit idx"] = (
+                    f"{unit_idx}.{split_idx}" if split_count > 1 else unit_idx
+                )
+                if split_count > 1:
+                    unit["Unit weight (kg)"] = float(row["Unit weight (kg)"]) / split_count
+                    unit["Max per pallet"] = 1
+                rows.append(unit)
     return pd.DataFrame(rows)
 
 
