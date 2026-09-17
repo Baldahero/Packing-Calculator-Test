@@ -55,7 +55,7 @@ class PackingCoreTests(unittest.TestCase):
         ))
         summary, _, _, _ = build_pallet_outputs(pd.DataFrame([result]))
         self.assertEqual(len(summary), 2)
-        self.assertEqual(summary["Pallet weight (kg)"].tolist(), [874.5, 874.5])
+        self.assertEqual(summary["Pallet weight (kg)"].tolist(), [1000.0, 749.0])
         self.assertEqual(result["Packed as"], "UNGLAZED")
         self.assertEqual(result["Glass separate"], "YES")
 
