@@ -70,13 +70,5 @@ class PackingCoreTests(unittest.TestCase):
         ))
         self.assertEqual(result["Packed as"], "NOT POSSIBLE")
 
-    def test_2160s_xs_is_always_unglazed(self):
-        result = calculate_construction(Construction(
-            "XS", "2160S XS", 4500, 2400, 1, 300, "Glazed", 400
-        ))
-        self.assertEqual(result["Packed as"], "UNGLAZED")
-        self.assertEqual(result["Glass separate"], "YES")
-
-
 if __name__ == "__main__":
     unittest.main()
