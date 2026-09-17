@@ -41,7 +41,6 @@ CAPACITY_1200 = {
     "triple folding door": 6,
     "quad folding door": 6,
     "5-leaf folding door": 6,
-    "2160s xs": 2,
 }
 
 SLIDING_PARTS = {
@@ -57,7 +56,6 @@ SLIDING_PARTS = {
 
 HEAVY_GLAZING_TYPES = set(SLIDING_PARTS)
 FACADE_TYPES = {"facade"}
-ALWAYS_UNGLAZED_TYPES = {"2160s xs"}
 MAX_GLAZED_WIDTH_HEAVY_MM = 5000
 MAX_ASSEMBLED_SLIDING_WIDTH_MM = 5960
 
@@ -184,12 +182,10 @@ def calculate_construction(c: Construction) -> Dict[str, object]:
 
     if c.glass_mode == "Without glass":
         notes.append("Frame only")
-    elif c.glass_mode == "Unglazed" or is_facade or item_type in ALWAYS_UNGLAZED_TYPES:
+    elif c.glass_mode == "Unglazed" or is_facade:
         glass_separate = "YES" if glass_weight > 0 else "NO"
         if is_facade:
             notes.append("Facade: glass packed separately")
-        elif item_type in ALWAYS_UNGLAZED_TYPES:
-            notes.append("2160S XS is always packed unglazed")
         else:
             notes.append("Glass packed separately")
     else:
