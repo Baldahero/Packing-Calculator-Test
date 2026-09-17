@@ -51,11 +51,40 @@ class PackingCoreTests(unittest.TestCase):
 
     def test_facades_split_only_when_weight_exceeds_1000_kg(self):
         result = calculate_construction(Construction(
-            "Facade bar", "Facade", 3000, 1, 13, 80, "Without glass", 0
+            "Heavy facade", "Facade", 4430, 1, 1, 1749, "Glazed", 5159
         ))
         summary, _, _, _ = build_pallet_outputs(pd.DataFrame([result]))
         self.assertEqual(len(summary), 2)
-        self.assertEqual(sorted(summary["Pallet weight (kg)"].tolist()), [80, 960])
+        self.assertEqual(summary["Pallet weight (kg)"].tolist(), [874.5, 874.5])
+        self.assertEqual(result["Packed as"], "UNGLAZED")
+        self.assertEqual(result["Glass separate"], "YES")
+
+    def test_facade_over_6000_is_divided_into_two_equal_parts(self):
+        result = calculate_construction(Construction(
+            "Long facade", "Facade", 7000, 1, 1, 400, "Without glass", 0
+        ))
+        self.assertEqual(result["Pallet width (mm)"], 3700)
+        summary, _, _, ldm = build_pallet_outputs(pd.DataFrame([result]))
+        self.assertEqual(len(summary), 2)
+        self.assertEqual(ldm, 3.7)
+
+    def test_facade_glass_boxes_use_3000_mm_length(self):
+        result = calculate_construction(Construction(
+            "Facade", "Facade", 5900, 1, 1, 500, "Glazed", 1600
+        ))
+        boxes, weight, _, ldm, box_length = calculate_glass_boxes(pd.DataFrame([result]))
+        self.assertEqual(boxes, 2)
+        self.assertEqual(weight, 1600)
+        self.assertEqual(box_length, 3000)
+        self.assertEqual(ldm, 3.0)
+
+    def test_explicitly_rotated_tall_door_stays_glazed(self):
+        result = calculate_construction(Construction(
+            "Rotated door", "Door", 1970, 3035, 1, 200, "Glazed", 100, True
+        ))
+        self.assertEqual(result["Packed sideways"], "NO")
+        self.assertEqual(result["Packed as"], "GLAZED")
+        self.assertEqual(result["Pallet width (mm)"], 3235)
 
     def test_required_pallet_length_over_6800_is_rejected(self):
         result = calculate_construction(Construction(
