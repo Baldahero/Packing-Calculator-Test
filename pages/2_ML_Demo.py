@@ -101,7 +101,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("Smart Packing Demonstration")
+st.title("Smart Packing")
 st.caption("Simple doors and windows. The demonstration groups different positions on shared 1200 mm pallets.")
 st.info(
     "This version demonstrates the future workflow. It uses constrained optimisation today. "
