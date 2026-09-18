@@ -114,7 +114,7 @@ if "smart_editor_version" not in st.session_state:
 if "smart_input_version" not in st.session_state:
     st.session_state.smart_input_version = 0
 
-input_tab, explanation_tab = st.tabs(["Project input", "How learning will work"])
+input_tab = st.tabs(["Project input"])[0]
 
 with input_tab:
     left_action, middle_action, spacer = st.columns([1, 1, 4])
@@ -175,19 +175,6 @@ with input_tab:
                 st.success("Packing proposal generated.")
             except Exception as exc:
                 st.error(str(exc))
-
-with explanation_tab:
-    st.markdown("""
-The safety rules will always remain fixed in the calculator. ML will not be allowed to exceed the pallet weight, quantity or length limits.
-
-For every completed project, the training record will contain:
-
-- the imported construction list;
-- the calculator's proposed pallet allocation;
-- the allocation corrected and confirmed by production.
-
-When enough confirmed examples are collected, the model can learn the production preference for dimensional compatibility. The same screen and Excel import will remain in use.
-""")
 
 allocation = st.session_state.smart_allocation
 summary = st.session_state.smart_summary
