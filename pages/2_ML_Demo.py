@@ -145,7 +145,7 @@ with input_tab:
     current_input = normalize_input(edited)
     st.session_state.smart_input = current_input
 
-    with st.expander("Import another Excel project"):
+    with st.expander("Import Excel file"):
         uploaded = st.file_uploader("Upload an .xlsx file", type=["xlsx"], key="smart_upload")
         if uploaded is not None:
             try:
