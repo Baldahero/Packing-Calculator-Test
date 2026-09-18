@@ -103,10 +103,7 @@ st.markdown("""
 
 st.title("Smart Packing")
 st.caption("Simple doors and windows. The demonstration groups different positions on shared 1200 mm pallets.")
-st.info(
-    "This version demonstrates the future workflow. It uses constrained optimisation today. "
-    "After production examples are confirmed, ML can learn which dimensions and construction combinations your team prefers."
-)
+
 st.markdown("""
 <div class="demo-steps">
   <div class="demo-step"><b>1. Import</b><br>Upload the construction list from Excel or edit it on screen.</div>
