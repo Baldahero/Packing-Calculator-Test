@@ -121,7 +121,7 @@ with input_tab:
     if left_action.button("Load Project 1", use_container_width=True):
         load_input(demo_project())
         st.rerun()
-    if middle_action.button("Clear", use_container_width=True):
+    if middle_action.button("Clear all", use_container_width=True):
         load_input(pd.DataFrame(columns=INPUT_COLUMNS))
         st.rerun()
     if SAMPLE_PATH.exists():
