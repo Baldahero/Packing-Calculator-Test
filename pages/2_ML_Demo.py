@@ -158,7 +158,7 @@ with input_tab:
             except Exception as exc:
                 st.error(f"Could not read the workbook: {exc}")
 
-    calculate, calculation_note = st.columns([1.2, 3.8])
+    calculate, _ = st.columns([1.2, 3.8])
     if calculate.button("Generate packing proposal", type="primary", use_container_width=True):
         errors = validate_input(current_input)
         if errors:
@@ -175,9 +175,6 @@ with input_tab:
                 st.success("Packing proposal generated.")
             except Exception as exc:
                 st.error(str(exc))
-    calculation_note.caption(
-        "Hard limits: maximum 6 units and 1000 kg per pallet. Pallet length uses +100 mm up to 3000 mm and +200 mm above 3000 mm."
-    )
 
 with explanation_tab:
     st.markdown("""
