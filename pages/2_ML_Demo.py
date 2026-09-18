@@ -159,7 +159,7 @@ with input_tab:
     current_input = normalize_input(edited)
     st.session_state.smart_input = current_input
 
-    with st.expander("Import Excel file"):
+        with st.expander("Import Excel file"):
         upload_column, download_column = st.columns([3, 2])
 
         with upload_column:
@@ -167,24 +167,33 @@ with input_tab:
                 "Upload an .xlsx file",
                 type=["xlsx"],
                 key="smart_upload",
-    )                
-         with download_column:
-             st.download_button(
-                 "Download input template",
-                 data=make_input_template(),
-                 file_name="Packing_Input_Template.xlsx",
-                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                 use_container_width=True,
-      ) 
-             
+            )
+
+        with download_column:
+            st.download_button(
+                "Download input template",
+                data=make_input_template(),
+                file_name="Packing_Input_Template.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True,
+            )
+
         if uploaded is not None:
             try:
                 imported, detected_sheet = read_uploaded_workbook(uploaded)
-                st.caption(f"Detected sheet: {detected_sheet}. Rows found: {len(imported)}.")
-                st.dataframe(imported, use_container_width=True, hide_index=True)
+                st.caption(
+                    f"Detected sheet: {detected_sheet}. Rows found: {len(imported)}."
+                )
+                st.dataframe(
+                    imported,
+                    use_container_width=True,
+                    hide_index=True,
+                )
+
                 if st.button("Use imported project", type="primary"):
                     load_input(imported)
                     st.rerun()
+
             except Exception as exc:
                 st.error(f"Could not read the workbook: {exc}")
 
