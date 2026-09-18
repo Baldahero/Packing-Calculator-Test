@@ -1,6 +1,6 @@
 # Packing Calculator - Test Version
 
-Safe test copy of the NorDan packing calculator. The original repository is not modified.
+Safe test copy of the NorDan packing calculator. Created to test the new features.
 
 ## Confirmed scope
 
