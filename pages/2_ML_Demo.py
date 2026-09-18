@@ -159,7 +159,7 @@ with input_tab:
                 st.error(f"Could not read the workbook: {exc}")
 
     calculate, _ = st.columns([1.2, 3.8])
-    if calculate.button("Generate packing proposal", type="primary", use_container_width=True):
+    if calculate.button("Generate proposal");
         errors = validate_input(current_input)
         if errors:
             st.error("Please correct the project input.")
