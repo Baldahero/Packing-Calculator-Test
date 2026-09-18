@@ -103,14 +103,6 @@ st.markdown("""
 
 st.title("Smart Packing")
 
-st.markdown("""
-<div class="demo-steps">
-  <div class="demo-step"><b>1. Import</b><br>Upload the construction list from Excel or edit it on screen.</div>
-  <div class="demo-step"><b>2. Suggest</b><br>The calculator proposes mixed pallets within the hard limits.</div>
-  <div class="demo-step"><b>3. Confirm</b><br>Production adjusts the proposal and saves the confirmed result for future learning.</div>
-</div>
-""", unsafe_allow_html=True)
-
 if "smart_input" not in st.session_state:
     st.session_state.smart_input = demo_project()
 if "smart_allocation" not in st.session_state:
