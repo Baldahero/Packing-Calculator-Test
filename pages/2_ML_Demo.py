@@ -5,7 +5,6 @@ from __future__ import annotations
 import html
 from pathlib import Path
 from textwrap import dedent
-from io import BytesIO
 
 import pandas as pd
 import streamlit as st
@@ -32,6 +31,9 @@ if not (st.session_state.get("_embedded_smart_demo") or st.session_state.get("_e
 SAMPLE_PATH = Path(__file__).resolve().parents[1] / "examples" / "Packing_Demo_Project_1.xlsx"
 COLORS = ["#2F75B5", "#70AD47", "#ED7D31", "#8064A2", "#00A6A6", "#C55A11"]
 
+INPUT_TEMPLATE_PATH = (
+    Path(_file_).resolve().parents[1] / "Pakcing_Input_template.xlsx"
+)
 
 def reset_result() -> None:
     st.session_state.smart_allocation = pd.DataFrame()
@@ -101,20 +103,7 @@ st.markdown("""
 @media (max-width:800px){.demo-steps{grid-template-columns:1fr}}
 </style>
 """, unsafe_allow_html=True)
-
-def make_input_template() -> bytes:
-    output = BytesIO()
-    
-    template = pd.DataFrame(columns=INPUT_COLUMNS)
-    
-    template.to_excel(
-        output,
-        index=False,
-        sheet_name="Constructions",
-        engine="openpyxl",
-    )
-    return output.getvalue()
-    
+ 
 st.title("Smart Packing")
 
 if "smart_input" not in st.session_state:
@@ -160,8 +149,11 @@ with input_tab:
     st.session_state.smart_input = current_input
 
     with st.expander("Import Excel file"):
-        upload_column, download_column = st.columns([3, 2])
-
+        upload_column, download_column = st.columns(
+            [3, 2],
+            vertical_alignment="bottom",
+        )
+        
         with upload_column:
             uploaded = st.file_uploader(
                 "Upload an .xlsx file",
