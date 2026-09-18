@@ -153,7 +153,7 @@ with input_tab:
             [3, 2],
             vertical_alignment="bottom",
         )
-        
+
         with upload_column:
             uploaded = st.file_uploader(
                 "Upload an .xlsx file",
@@ -164,7 +164,7 @@ with input_tab:
         with download_column:
             st.download_button(
                 "Download input template",
-                data=make_input_template(),
+                data=INPUT_TEMPLATE_PATH.read_bytes(),
                 file_name="Packing_Input_Template.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 use_container_width=True,
