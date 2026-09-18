@@ -159,7 +159,7 @@ with input_tab:
     current_input = normalize_input(edited)
     st.session_state.smart_input = current_input
 
-        with st.expander("Import Excel file"):
+    with st.expander("Import Excel file"):
         upload_column, download_column = st.columns([3, 2])
 
         with upload_column:
