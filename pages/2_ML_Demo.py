@@ -5,6 +5,7 @@ from __future__ import annotations
 import html
 from pathlib import Path
 from textwrap import dedent
+from io import BytesIO
 
 import pandas as pd
 import streamlit as st
@@ -101,6 +102,19 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+def make_input_template() -> bytes:
+    output = BytesIO()
+    
+    template = pd.DataFrame(columns=INPUT_COLUMNS)
+    
+    template.to_excel(
+        output,
+        index=False,
+        sheet_name="Constructions",
+        engine="openpyxl",
+    )
+    return output.getvalue()
+    
 st.title("Smart Packing")
 
 if "smart_input" not in st.session_state:
@@ -146,7 +160,23 @@ with input_tab:
     st.session_state.smart_input = current_input
 
     with st.expander("Import Excel file"):
-        uploaded = st.file_uploader("Upload an .xlsx file", type=["xlsx"], key="smart_upload")
+        upload_column, download_column = st.columns([3, 2])
+
+        with upload_column:
+            uploaded = st.file_uploader(
+                "Upload an .xlsx file",
+                type=["xlsx"],
+                key="smart_upload",
+    )                
+         with download_column:
+             st.download_button(
+                 "Download input template",
+                 data=make_input_template(),
+                 file_name="Packing_Input_Template.xlsx",
+                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                 use_container_width=True,
+      ) 
+             
         if uploaded is not None:
             try:
                 imported, detected_sheet = read_uploaded_workbook(uploaded)
