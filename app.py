@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import html
 from pathlib import Path
+from textwrap import dedent
 
 import pandas as pd
 import streamlit as st
@@ -63,7 +64,7 @@ def pallet_cards(allocation: pd.DataFrame, summary: pd.DataFrame) -> str:
 
         status_class = "ok" if pallet["Status"] == "Within limits" else "invalid"
         cards.append(
-            f"""
+            dedent(f"""
             <div class="pallet-card {status_class}">
               <div class="pallet-title">Pallet {number}</div>
               <div class="pallet-composition">{html.escape(str(pallet['Composition']))}</div>
@@ -77,7 +78,7 @@ def pallet_cards(allocation: pd.DataFrame, summary: pd.DataFrame) -> str:
               </div>
               <div class="pallet-status">{html.escape(str(pallet['Status']))}</div>
             </div>
-            """
+            """).strip()
         )
     return '<div class="pallet-grid">' + "".join(cards) + "</div>"
 
