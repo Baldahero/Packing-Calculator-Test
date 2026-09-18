@@ -104,7 +104,7 @@ st.markdown("""
 st.title("Smart Packing")
 
 if "smart_input" not in st.session_state:
-    st.session_state.smart_input = demo_project()
+    st.session_state.smart_input = pd.DataFrame(columns=INPUT_COLUMNS)
 if "smart_allocation" not in st.session_state:
     st.session_state.smart_allocation = pd.DataFrame()
 if "smart_summary" not in st.session_state:
@@ -122,7 +122,7 @@ with input_tab:
         load_input(demo_project())
         st.rerun()
     if middle_action.button("Clear", use_container_width=True):
-        load_input(empty_project())
+        load_input(pd.DataFrame(columns=INPUT_COLUMNS))
         st.rerun()
     if SAMPLE_PATH.exists():
         sample_action.download_button(
