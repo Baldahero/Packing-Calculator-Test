@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import Bounds, LinearConstraint, milp
 from scipy.sparse import coo_matrix
+from ml_scoring import pairing_cost
 
 
 PALLET_DEPTH_MM = 1200
@@ -214,12 +215,12 @@ def _build_problem(rows: pd.DataFrame, bin_count: int):
     objective[length_start:pair_start] = 1000.0
     objective[u_start:length_start] = 0.05  # discourage unnecessary position splits
     for pair_index, (left, right) in enumerate(pairs):
-        dimension_distance = (
-            abs(float(positions.loc[left, "Width (mm)"]) - float(positions.loc[right, "Width (mm)"]))
-            + abs(float(positions.loc[left, "Height (mm)"]) - float(positions.loc[right, "Height (mm)"]))
-        ) / 1000.0
+        compatibility_cost = pairing_cost(
+            positions.loc[left],
+            positions.loc[right],
+        )
         for pallet in range(bin_count):
-            objective[pair_start + pair_index * bin_count + pallet] = dimension_distance
+            objective[pair_start + pair_index * bin_count + pallet] = compatibility_cost
 
     integrality = np.zeros(variable_count)
     integrality[x_start:u_start] = 1
