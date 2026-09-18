@@ -1,4 +1,5 @@
 import math
+import runpy
 from dataclasses import dataclass
 from io import BytesIO
 from typing import Dict, List
@@ -652,6 +653,20 @@ def clear_results() -> None:
 # UI
 # ============================================================
 st.set_page_config(page_title="Packing Calculator", layout="wide")
+
+app_mode = st.radio(
+    "Mode",
+    ["Calculator", "Experimental ML"],
+    horizontal=True,
+    key="app_mode",
+)
+
+if app_mode == "Experimental ML":
+    st.session_state["_embedded_ml"] = True
+    runpy.run_path("pages/2_ML_Demo.py", run_name="__main__")
+    st.stop()
+
+st.session_state.pop("_embedded_ml", None)
 
 header_left, header_right = st.columns([1, 4])
 with header_left:
