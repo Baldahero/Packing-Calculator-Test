@@ -117,22 +117,13 @@ if "smart_input_version" not in st.session_state:
 input_tab, explanation_tab = st.tabs(["Project input", "How learning will work"])
 
 with input_tab:
-    left_action, middle_action, sample_action, spacer = st.columns([1, 1, 1.4, 2.6])
+    left_action, middle_action, spacer = st.columns([1, 1, 4])
     if left_action.button("Load Project 1", use_container_width=True):
         load_input(demo_project())
         st.rerun()
     if middle_action.button("Clear all", use_container_width=True):
         load_input(pd.DataFrame(columns=INPUT_COLUMNS))
         st.rerun()
-    if SAMPLE_PATH.exists():
-        sample_action.download_button(
-            "Download example Excel",
-            data=SAMPLE_PATH.read_bytes(),
-            file_name="Packing_Demo_Project_1.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            use_container_width=True,
-        )
-    spacer.caption("Project 1 contains 20 constructions across six positions.")
 
     edited = st.data_editor(
         st.session_state.smart_input,
