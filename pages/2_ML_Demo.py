@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import html
+from textwrap import dedent
 
 import pandas as pd
 import streamlit as st
@@ -53,17 +54,17 @@ def pallet_html(row: pd.Series) -> str:
     blocks_a = "".join('<span class="unit unit-a"></span>' for _ in range(units_a)) or '<span class="empty">empty</span>'
     blocks_b = "".join('<span class="unit unit-b"></span>' for _ in range(units_b)) or '<span class="empty">empty</span>'
     review = " review" if row["Manual review"] == "Yes" else ""
-    return f"""
-    <div class="pallet-card{review}">
-      <div class="pallet-title">{item} · Pallet {int(row['Pallet'])}</div>
-      <div class="pallet-meta">{int(row['Units'])} units · {row['Pallet weight (kg)']:.0f} kg · {row['Pallet length (mm)']:.0f} × 1200 mm · {row['Pallet LDM']:.3f} LDM</div>
-      <div class="pallet-body">
-        <div class="side"><b>Side A</b><div class="units">{blocks_a}</div><small>{units_a} unit(s)</small></div>
-        <div class="rack"><span>100 mm rack</span></div>
-        <div class="side"><b>Side B</b><div class="units">{blocks_b}</div><small>{units_b} unit(s)</small></div>
-      </div>
-    </div>
-    """
+    return dedent(f"""
+        <div class="pallet-card{review}">
+          <div class="pallet-title">{item} · Pallet {int(row['Pallet'])}</div>
+          <div class="pallet-meta">{int(row['Units'])} units · {row['Pallet weight (kg)']:.0f} kg · {row['Pallet length (mm)']:.0f} × 1200 mm · {row['Pallet LDM']:.3f} LDM</div>
+          <div class="pallet-body">
+            <div class="side"><b>Side A</b><div class="units">{blocks_a}</div><small>{units_a} unit(s)</small></div>
+            <div class="rack"><span>100 mm rack</span></div>
+            <div class="side"><b>Side B</b><div class="units">{blocks_b}</div><small>{units_b} unit(s)</small></div>
+          </div>
+        </div>
+    """).strip()
 
 
 st.markdown("""
