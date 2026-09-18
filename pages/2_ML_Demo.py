@@ -19,7 +19,8 @@ from ml_packing import (
 )
 
 
-st.set_page_config(page_title="Packing ML Demo", page_icon="📦", layout="wide")
+if not st.session_state.get("_embedded_ml"):
+    st.set_page_config(page_title="Packing ML Demo", page_icon="📦", layout="wide")
 
 
 @st.cache_resource(show_spinner="Training experimental model...")
