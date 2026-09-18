@@ -32,7 +32,7 @@ SAMPLE_PATH = Path(__file__).resolve().parents[1] / "examples" / "Packing_Demo_P
 COLORS = ["#2F75B5", "#70AD47", "#ED7D31", "#8064A2", "#00A6A6", "#C55A11"]
 
 INPUT_TEMPLATE_PATH = (
-    Path(_file_).resolve().parents[1] / "Pakcing_Input_template.xlsx"
+    Path(__file__).resolve().parents[1] / "Packing_Input_Template.xlsx"
 )
 
 def reset_result() -> None:
